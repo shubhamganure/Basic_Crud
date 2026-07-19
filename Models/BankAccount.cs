@@ -10,6 +10,5 @@ namespace Basic_Crud
         public string accountType { get; set; } = string.Empty;
         public decimal balance { get; set; }
         public bool isActive { get; set; }
-
     }
 }
