@@ -1,3 +1,6 @@
+using Basic_Crud;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,6 +10,11 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddDbContext<EmployeeDbContextClass>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("employeeCon"));
+});
 
 var app = builder.Build();
 
