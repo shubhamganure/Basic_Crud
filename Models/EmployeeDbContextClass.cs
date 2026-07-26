@@ -10,6 +10,7 @@ namespace Basic_Crud
         }
 
         public DbSet<EmployeeNewClass> Employees { get; set; }
+        public DbSet<BankAccount> BankAccounts { get; set; }
 
 
     }
