@@ -13,7 +13,10 @@ namespace Basic_Crud
         public DbSet<BankAccount> BankAccounts { get; set; }
 
         public DbSet<Location> Locations { get; set; }
+        public DbSet<TeacherModel> TeacherModels { get; set; }
 
+        public DbSet<ProductDetailsModel> ProductDetailsModels {get;set;}
+        public DbSet<ProductExtraDetailsModel> ProductExtraDetailsModels {get;set;}
 
     }
 }
