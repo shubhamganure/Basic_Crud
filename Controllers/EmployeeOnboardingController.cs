@@ -18,6 +18,7 @@ namespace Basic_Crud
         [HttpPost("CreateEmployee")]
         public async Task<IActionResult> CreateEmployee([FromBody] EmployeeMasterDetailsViewModel employee)
         {
+            var transaction = await _dbContext.Database.BeginTransactionAsync();
             try
             {
                 EmployeeMasterModel _employee = new EmployeeMasterModel()
@@ -39,11 +40,13 @@ namespace Basic_Crud
                 };
                 await _dbContext.EmployeeIdentityDetailsModels.AddAsync(_employeeIdentityDetails);
                 await _dbContext.SaveChangesAsync();
-                // employee.empId = _employee.empId; // Set the empId in the response model
+                transaction.Commit();
+                employee.empId = _employee.empId; // Set the empId in the response model
                 return Created("Employee created successfully.", employee);
             }
             catch (System.Exception)
             {
+                transaction.Rollback();
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while adding the employee.");
             }
         }

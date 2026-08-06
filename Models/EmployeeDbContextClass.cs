@@ -20,6 +20,8 @@ namespace Basic_Crud
 
         public DbSet<EmployeeMasterModel> EmployeeMasterModels { get; set; }
         public DbSet<EmployeeIdentityDetailsModel> EmployeeIdentityDetailsModels { get; set; }
+        public DbSet<CustomerModel> CustomerModels { get; set; }
+        public DbSet<CustomerAddressModel> CustomerAddressModels { get; set; }
 
     }
 }
