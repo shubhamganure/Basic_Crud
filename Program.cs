@@ -11,6 +11,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+
 builder.Services.AddDbContext<EmployeeDbContextClass>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("employeeCon"));

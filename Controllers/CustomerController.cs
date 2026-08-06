@@ -8,155 +8,46 @@ namespace Basic_Crud
     [ApiController]
     public class CustomerController : ControllerBase
     {
-        public readonly EmployeeDbContextClass _dbContext;
+        public readonly ICustomerService _customerService;
 
-        public CustomerController(EmployeeDbContextClass dbContext)
+        public CustomerController(ICustomerService customerService)
         {
-            _dbContext = dbContext;
+            _customerService = customerService;
         }
 
         [HttpPost("CreateCustomer")]
-        public async Task<IActionResult> CreateCustomer(CustomerAddressViewModel obj)
+        public async Task<CustomerAddressViewModel> CreateCustomer(CustomerAddressViewModel obj)
         {
-            CustomerModel _customer = new CustomerModel()
-            {
-                 email = obj.email,
-                 mobile = obj.mobile,
-                 name = obj.name
-            };
-            await _dbContext.CustomerModels.AddAsync(_customer);
-            await _dbContext.SaveChangesAsync();
-
-            foreach (var address in obj.addresses)
-            {
-                CustomerAddressModel _customerAddress = new CustomerAddressModel()
-                {
-                    custId = _customer.custId,
-                    address = address.address,
-                    city = address.city,
-                    title = address.title,
-                    pincode = address.pincode
-                };
-                await _dbContext.CustomerAddressModels.AddAsync(_customerAddress);
-                await _dbContext.SaveChangesAsync();
-            }
-            obj.custId = _customer.custId; // Set the custId in the response model
-            return Created("Customer created successfully.", obj);
+            var result = await _customerService.CreateCustomer(obj);
+            return result;
         }
 
         [HttpGet("getCustomers")]
-        public async Task<IActionResult> GetCustomers()
+        public async Task<List<CustomerModel>> GetCustomers()
         {
-            try
-            {
-                var customers = await _dbContext.CustomerModels.ToListAsync();
-                return Ok(customers);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            var customers = await _customerService.GetCustomers();
+            return customers;
         }
 
         [HttpGet("getCustomerById/{id}")]
-        public async Task<IActionResult> getCustomerById(int id)
+        public async Task<CustomerAddressViewModel> getCustomerById(int id)
         {
-            try
-            {
-                var customer = await _dbContext.CustomerModels.SingleOrDefaultAsync(m=> m.custId == id);
-                if (customer == null)
-                {
-                    return NotFound($"Customer with ID {id} not found.");
-                }
-                else
-                {
-                    var addresses = await _dbContext.CustomerAddressModels.Where(a => a.custId == id).ToListAsync();
-                    var customerViewModel = new CustomerAddressViewModel
-                    {
-                        custId = customer.custId,
-                        name = customer.name,
-                        email = customer.email,
-                        mobile = customer.mobile,
-                        addresses = addresses
-                    };
-                    return Ok(customerViewModel);
-                }
-
-            }
-            catch (System.Exception ex)
-            {
-                
-                return StatusCode(500, new {error = ex.Message});
-            }
+            var customer = await _customerService.getCustomerById(id);
+            return customer;
         }
 
         [HttpDelete("deleteCustomerById/{id}")]
-        public async Task<IActionResult> deleteCustomerById(int id)
+        public async Task<bool> deleteCustomerById(int id)
         {
-            try
-            {
-                var customer = await _dbContext.CustomerModels.SingleOrDefaultAsync(m => m.custId == id);
-                if (customer == null)
-                {
-                    return NotFound($"Customer with ID {id} not found.");
-                }
-                else
-                {
-                    var addresses = await _dbContext.CustomerAddressModels.Where(a => a.custId == id).ToListAsync();
-                    _dbContext.CustomerAddressModels.RemoveRange(addresses);
-                    _dbContext.CustomerModels.Remove(customer);
-                    await _dbContext.SaveChangesAsync();
-                    return Ok($"Customer with ID {id} and associated addresses deleted successfully.");
-                }
-
-            }
-            catch (System.Exception ex)
-            {
-
-                return StatusCode(500, new { error = ex.Message });
-            }
+            var result = await _customerService.deleteCustomerById(id);
+            return result;
         }
 
         [HttpPut("updateCustomerById/{id}")]
-        public async Task<IActionResult> UpdateCustomerById(int id, CustomerAddressViewModel obj)
+        public async Task<CustomerAddressViewModel> UpdateCustomerById(int id, CustomerAddressViewModel obj)
         {
-            try
-            {
-                var customer = await _dbContext.CustomerModels.SingleOrDefaultAsync(m => m.custId == id);
-                if (customer == null)
-                {
-                    return NotFound($"Customer with ID {id} not found.");
-                }
-                else
-                {
-                    customer.name = obj.name;
-                    customer.email = obj.email;
-                    customer.mobile = obj.mobile;
-
-                    var addresses = await _dbContext.CustomerAddressModels.Where(a => a.custId == id).ToListAsync();
-                    _dbContext.CustomerAddressModels.RemoveRange(addresses);
-
-                    foreach (var address in obj.addresses)
-                    {
-                        CustomerAddressModel _customerAddress = new CustomerAddressModel()
-                        {
-                            custId = customer.custId,
-                            address = address.address,
-                            city = address.city,
-                            title = address.title,
-                            pincode = address.pincode
-                        };
-                        await _dbContext.CustomerAddressModels.AddAsync(_customerAddress);
-                    }
-
-                    await _dbContext.SaveChangesAsync();
-                    return Ok($"Customer with ID {id} updated successfully.");
-                }
-            }
-            catch (System.Exception ex)
-            {
-                return StatusCode(500, new { error = ex.Message });
-            }
+            var result = await _customerService.UpdateCustomerById(id, obj);
+            return result;
         }
     }
 }
