@@ -22,6 +22,7 @@ namespace Basic_Crud
         public DbSet<EmployeeIdentityDetailsModel> EmployeeIdentityDetailsModels { get; set; }
         public DbSet<CustomerModel> CustomerModels { get; set; }
         public DbSet<CustomerAddressModel> CustomerAddressModels { get; set; }
+         public DbSet<UserModel> UserModels { get; set; } 
 
     }
 }
